@@ -1,9 +1,13 @@
 package view;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-public class WordleGUIView extends Application {
+@SuppressWarnings("deprecation")
+public class WordleGUIView extends Application implements Observer{
 
 	/* Constants for the scene */
 	private static final int SCENE_SIZE = 800;
@@ -19,6 +23,12 @@ public class WordleGUIView extends Application {
 	@Override
 	public void start(Stage stage) {
 
+	}
+
+	@Override
+	public void update(Observable model, Object arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

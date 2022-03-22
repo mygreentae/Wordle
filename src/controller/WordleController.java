@@ -37,6 +37,8 @@ public class WordleController {
 	}
 	
 	public void makeGuess(String guess) {
+		model.makeGuess(currGuess, guess);
+		currGuess++;
 	}
 
 }

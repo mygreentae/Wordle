@@ -17,22 +17,21 @@ import java.util.Set;
 @SuppressWarnings("deprecation")
 public class WordleModel extends Observable {
 	
-	private static final String FILENAME = "dictionary.txt";
+	private static final String FILENAME = "Dictionary.txt";
 	private static final int WORD_LENGTH = 5;
+	private static final int NUM_GUESSES = 6;
+	
 	private String answer;
-	private int currGuess;
 	
 	private List<String> dictionary;
 	private INDEX_RESULT[] guessedCharacters;
-	private Set<Guess> guessedWords;
+	private Guess[] guessedWords;
 	
 
 	public WordleModel() throws IOException { 
 		this.answer = "";
 		this.guessedCharacters = new INDEX_RESULT[26];
-		this.currGuess = 0;
-		
-		this.guessedWords = new HashSet<Guess>();
+		this.guessedWords = new Guess[NUM_GUESSES];
 		
 		createDictionary();
 		setAnswer();
@@ -66,8 +65,9 @@ public class WordleModel extends Observable {
 						indices[i] = INDEX_RESULT.INCORRECT;
 					}
 				}
-				guessedWords.add(new Guess(guess, indices, numCorrectIndices==5));
-				this.currGuess++;
+				guessedWords[guessNumber] = new Guess(guess, indices, numCorrectIndices==5);
+				setChanged();
+				notifyObservers();
 			}
 		} 
 		catch (IllegalArgumentException e) {
