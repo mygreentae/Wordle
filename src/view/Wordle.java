@@ -25,6 +25,7 @@ public class Wordle {
     		System.out.println("HERE");
     		WordleTextView view = new WordleTextView();
     		model.addObserver(view);
+    		controller.makeGuess("eager");
     	}
     	
     }
