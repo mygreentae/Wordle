@@ -64,7 +64,7 @@ public class WordleModel extends Observable {
 						indices[i] = INDEX_RESULT.INCORRECT;
 					}
 				}
-				guessedWords[guessNumber] = new Guess(guess, indices, numCorrectIndices==5);
+				guessedWords[guessNumber] = new Guess(guess, indices, numCorrectIndices==WORD_LENGTH);
 				setChanged();
 				notifyObservers();
 			}

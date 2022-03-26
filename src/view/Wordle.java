@@ -12,20 +12,14 @@ import model.WordleModel;
 public class Wordle {
    
 	public static void main(String[] args) throws IOException {
-    	WordleModel model = new WordleModel();
-    	WordleController controller = new WordleController(model);
-    	
     	
     	if (args[0].equals("-text")) {
 			WordleTextView view = new WordleTextView();
-    		model.addObserver(view);
-    		view.gameLoop(controller);
+    		view.gameLoop();
     	}
     	else {
     		WordleGUIView view = new WordleGUIView();
-    		model.addObserver(view);
     		Application.launch(WordleGUIView.class, args);
     	}
-    	//System.out.println(model.getAnswer());
     } 
 }

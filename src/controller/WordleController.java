@@ -1,7 +1,5 @@
 package controller;
 
-import java.util.Scanner;
-
 import model.WordleModel;
 
 import utilities.Guess;
@@ -26,8 +24,7 @@ public class WordleController {
 		else if (currGuess > 5) {
 			return true;
 		}
-		else if (progress[currGuess-1] != null && 
-				progress[currGuess-1].getIsCorrect() == true) {
+		else if (model.getProgress()[currGuess-1].getIsCorrect() == true) {
 			return true;
 		}
 		return false;
@@ -38,7 +35,13 @@ public class WordleController {
 	}
 	
 	public void makeGuess(String guess) {
-		model.makeGuess(currGuess, guess.toUpperCase());
+		try {
+			model.makeGuess(currGuess, guess.toUpperCase().strip());
+			currGuess++;
+		}
+		catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 
 }

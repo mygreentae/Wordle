@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
@@ -12,14 +13,15 @@ import utilities.INDEX_RESULT;
 @SuppressWarnings("deprecation")
 public class WordleTextView implements Observer {
 	
-	public void gameLoop(WordleController controller) {
+	public void gameLoop() throws IOException {
 		System.out.println("Hello! Welcome to Wordle!");
 		Scanner in  = new Scanner (System.in);
 		boolean play = true;
 		
 		while (play) {
+			WordleController controller = createGame();
 			playGame(controller, in);
-			System.out.println("Good GameL The word was " + controller.getAnswer());
+			System.out.println("Good Game the word was: " + controller.getAnswer());
 			System.out.println("Play again? yes/no");
 			
 			String playAgain = in.nextLine().toString();
@@ -28,18 +30,19 @@ public class WordleTextView implements Observer {
 			}
 		}
 		in.close();
-		System.out.println("See you next time");
+		System.out.println("See you next time.");
 	}
 	
 	private void playGame(WordleController controller, Scanner in) {
-		while (!controller.isGameOver()) {
+		
+		while (controller.isGameOver()==false) {
+			System.out.println("Enter a guess: ");
+			String guess = in.nextLine().toString();
 			try {
-				System.out.println("Enter a guess: ");
-				String guess = in.nextLine().toString();
 				controller.makeGuess(guess);
 			}
 			catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
 	}
@@ -48,6 +51,7 @@ public class WordleTextView implements Observer {
 	public void update(Observable model, Object arg1) {
 		WordleModel game = (WordleModel) model;
 		updateProgress(game);
+		updateLetterSummary(game);
 	}
 	
 	private void updateProgress(WordleModel game) {
@@ -74,5 +78,43 @@ public class WordleTextView implements Observer {
 			}
 		}
 		System.out.println();
+	}
+	
+	private void updateLetterSummary (WordleModel game) {
+		StringBuilder unguessed = new StringBuilder();
+		StringBuilder incorrect = new StringBuilder();
+		StringBuilder correct = new StringBuilder();
+		StringBuilder correctWrong = new StringBuilder();
+		
+		for (int i = 0; i < 26; i++) {
+			if (game.getGuessedCharacters()[i] == null) {
+				unguessed.append((char) ((int) 'A' + i));
+				unguessed.append(", ");
+			}
+			else if (game.getGuessedCharacters()[i] == INDEX_RESULT.INCORRECT) {
+				incorrect.append((char) ((int) 'A' + i));
+				incorrect.append(", ");
+			}
+			else if (game.getGuessedCharacters()[i] == INDEX_RESULT.CORRECT) {
+				correct.append((char) ((int) 'A' + i));
+				correct.append(", ");
+			}
+			else if (game.getGuessedCharacters()[i] == INDEX_RESULT.CORRECT_WRONG_INDEX) {
+				correctWrong.append((char) ((int) 'A' + i));
+				correctWrong.append(", ");
+			}
+		}
+		System.out.println("Unguessed [" + unguessed.toString().replaceAll(", $", "") + "]");
+		System.out.println("Incorrect [" + incorrect.toString().replaceAll(", $", "") + "]");
+		System.out.println("Correct [" + correct.toString().replaceAll(", $", "") + "]");
+		System.out.println("Correct Letter, Wrong Index[" + correctWrong.toString().replaceAll(", $", "") + "]");
+		System.out.println();
+	}
+	
+	private  WordleController createGame() throws IOException {
+		WordleModel model = new WordleModel();
+		WordleController controller = new WordleController(model);
+		model.addObserver(this);
+		return controller;
 	}
 }
