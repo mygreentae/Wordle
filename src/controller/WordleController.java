@@ -1,9 +1,10 @@
 package controller;
 
+import java.util.Scanner;
+
 import model.WordleModel;
 
 import utilities.Guess;
-import utilities.INDEX_RESULT;
 
 public class WordleController {
 	
@@ -38,7 +39,6 @@ public class WordleController {
 	
 	public void makeGuess(String guess) {
 		model.makeGuess(currGuess, guess.toUpperCase());
-		currGuess++;
 	}
 
 }

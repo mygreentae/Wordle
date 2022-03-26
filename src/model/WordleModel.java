@@ -38,7 +38,6 @@ public class WordleModel extends Observable {
 	}
 
 	public void makeGuess(int guessNumber, String guess) {
-		try{
 			if (guess.length() != WORD_LENGTH) {
 				throw new IllegalArgumentException("The length of the guess must be 5.");
 			}
@@ -69,10 +68,6 @@ public class WordleModel extends Observable {
 				setChanged();
 				notifyObservers();
 			}
-		} 
-		catch (IllegalArgumentException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 	public String getAnswer() {

@@ -15,18 +15,17 @@ public class Wordle {
     	WordleModel model = new WordleModel();
     	WordleController controller = new WordleController(model);
     	
-    	if (args[0].equals("-gui")) {// TODO Write while loop
+    	
+    	if (args[0].equals("-text")) {
+			WordleTextView view = new WordleTextView();
+    		model.addObserver(view);
+    		view.gameLoop(controller);
+    	}
+    	else {
     		WordleGUIView view = new WordleGUIView();
     		model.addObserver(view);
     		Application.launch(WordleGUIView.class, args);
     	}
-    	else if (args[0].equals("-text")) {
-			WordleTextView view = new WordleTextView();
-    		model.addObserver(view);
-    		controller.makeGuess("eager");
-    	}
-    	
-    }
-	// TODO Write gameLoop :D
-    
+    	//System.out.println(model.getAnswer());
+    } 
 }
