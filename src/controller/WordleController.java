@@ -2,8 +2,6 @@ package controller;
 
 import model.WordleModel;
 
-import utilities.Guess;
-
 public class WordleController {
 	
 	private WordleModel model;
@@ -19,7 +17,7 @@ public class WordleController {
 		if (currGuess == 0) {
 			return false;
 		}
-		else if (currGuess > 5) {
+		else if (currGuess == MAX_NUM_GUESSES) {
 			return true;
 		}
 		else if (model.getProgress()[currGuess-1].getIsCorrect() == true) {

@@ -218,8 +218,6 @@ public class WordleGUIView extends Application implements Observer{
 		        dialog.show();
 		    });
 		 }
-		 
-		 
 	}
 	
 	private String getWord(Tile[][] tiles, WordleController controller) {
@@ -244,8 +242,6 @@ public class WordleGUIView extends Application implements Observer{
 		
 		CUR_GUESS++;
 		CUR_COL = -1;
-		
-		
 	}
 	
 	private void updateTiles(WordleModel game) {
