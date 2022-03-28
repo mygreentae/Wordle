@@ -11,7 +11,14 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
-/// change the type of guessed words!!
+/**
+ * This class represents the model of Wordle. It stores each of the user's guesses,
+ * and keeps track of which characters have been correctly guessed,
+ * incorrectly guessed and which crackers are correctly guessed but in
+ * the incorrect positions.
+ * 
+ * @author Leighanna Pipatanangkura
+ */
 @SuppressWarnings("deprecation")
 public class WordleModel extends Observable {
 	
@@ -35,6 +42,15 @@ public class WordleModel extends Observable {
 		setAnswer();
 	}
 
+	/**
+	 * Updates the guessed characters array with whether or not at the index
+	 * the character appears in the alphabet. If the character has not been guessed 
+	 * yet, the corresponding index will be null.
+	 * @param guess
+	 * 		The user's guess passed in as a string.
+	 * @return guessNumber 
+	 * 		the guess number we are on.
+	 */
 	public void makeGuess(int guessNumber, String guess) {
 			if (guess.length() != WORD_LENGTH) {
 				throw new IllegalArgumentException("The length of the guess must be 5.");
@@ -68,14 +84,32 @@ public class WordleModel extends Observable {
 			}
 	}
 
+	/**
+	 * Returns the answer to win the game.
+	 * @return
+	 * 		the hidden word.
+	 */
 	public String getAnswer() {
 		return this.answer;
 	}
 
+	/**
+	 * Returns an array of characters that corresponds to what the user has guess and have not guessed.
+	 * Where null will represent what the user has not guessed, and the actual character for what the user 
+	 * has already guessed all corresponding to the indices they appear in the alphabet.
+	 * @return
+	 * 	the character array that represents the letters the user 
+	 */
 	public INDEX_RESULT[] getGuessedCharacters() {
 		return guessedCharacters;
 	}
 	
+	/**
+	 * Returns the user's progress.
+	 * @return
+	 * 		a array of guesses that represents the progress the user has made
+	 * 		through out the game.
+	 */
 	public Guess[] getProgress() {
 		return guessedWords;
 	}

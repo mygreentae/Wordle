@@ -1,3 +1,5 @@
+
+
 package view;
 
 import java.util.Observable;
@@ -37,6 +39,16 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
+/**
+ * This uses JavaFX to create a GUI for the game Wordle which is supposed to be
+ * more or less a clone of the original game play and visuals. However, it allows 
+ * you to play infinitely unlike the original. 
+ * 
+ * @author Leighanna Pipatanangkura
+ * 
+ * @see WordleController
+ * @see WordleModel
+ */
 @SuppressWarnings("deprecation")
 public class WordleGUIView extends Application implements Observer{
 
@@ -54,11 +66,13 @@ public class WordleGUIView extends Application implements Observer{
 	private static final int SUMMARY_FONT = 15;
 	private static final int SUMMARY_SQUARE_SIZE = 45;
 
+	/* Constants to keep track of game progress */
 	private static int CUR_COL = -1;
 	private static int CUR_GUESS = 0;
 	
 	private WordleController controller;
 	
+	// keyboard layout
 	private static final String[][] keys = {
 			{"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
 			{"A", "S", "D", "F", "G", "H", "J", "K", "L"},
@@ -68,6 +82,11 @@ public class WordleGUIView extends Application implements Observer{
 	Tile[][] tilesArray;
 	KeyBoardTile[] keyboardTiles;
 	
+	/**
+	 * This is the main entry point for all JavaFX applications. This 
+	 * method is called after the main (init) function is called, and when
+	 * the system is ready to begin running.
+	 */
 	@Override
 	public void start(Stage stage) throws IOException {
 		WordleModel model = new WordleModel();
@@ -78,7 +97,7 @@ public class WordleGUIView extends Application implements Observer{
 		
 		tilesArray = new Tile[NUM_GUESSES][NUM_LETTERS];
 		keyboardTiles = new KeyBoardTile[26];
-		GridPane tiles = addTiles(controller, model, tilesArray);
+		GridPane tiles = addTiles(tilesArray);
 		GridPane letters = letters(keyboardTiles);
 		
 		border.setCenter(tiles);
@@ -94,8 +113,22 @@ public class WordleGUIView extends Application implements Observer{
         keyPress(tilesArray, stage, controller);        
 	}
 
-
-	private GridPane addTiles(WordleController controller, WordleModel model, Tile[][] tilesArray) {
+	/**
+	 * Creates the game tiles that the player will see. These also update
+	 * when the user enters a word. These tiles change color:
+	 * 		Yellow: Correct Letter, but Wrong Index;
+	 * 		Red: Incorrect Letter;
+	 * 		Green: Correct Letter;
+	 * These tiles also are animated too
+	 * 
+	 * @param tilesArray are the collection of tiles to be laid out. They are
+	 * 		in this array so it is easier to update and animate once
+	 * 		the user has interacted with it.
+	 * @return
+	 * 		the GridPane that displays all the tiles is returned to
+	 * 		be displayed.
+	 */
+	private GridPane addTiles(Tile[][] tilesArray) {
 		GridPane letterGrid = new GridPane();
 		letterGrid.setHgap(GRID_GAP);
 	    letterGrid.setVgap(GRID_GAP);
@@ -112,6 +145,17 @@ public class WordleGUIView extends Application implements Observer{
 		return letterGrid;
 		}
 	
+	/**
+	 * Creates the letters to be displayed in the keyboard below the word tiles.
+	 * Like the word tiles, these change color corresponding to the 
+	 * correctness of the letter entered.
+	 * 
+	 * @param keyboardTiles are the collection of the letter tiles (to form the keyboard).
+	 * 		They are in this array so it is easier to update and animate once the user has
+	 * 		Interacted with the interface.
+	 * @return 
+	 * 		The GridPane that displays all the tiles is returned to be displayed.
+	 */
 	private GridPane letters(StackPane[] keyboardTiles) {
 		GridPane letters = new GridPane();
 		
@@ -140,6 +184,24 @@ public class WordleGUIView extends Application implements Observer{
 		return letters;
 	}
 	
+	/**
+	 * This handles the events for the game. This includes the all the key presses:
+	 * 	1) ENTER: When the user presses enter, the word is submitted and evaluated.
+	 * 		Error messages will be displayed if the word is not long enough or if the
+	 * 		word does not appear in the dictionary. It also checks is the game is
+	 * 		over or not so the correct answer can be displayed.
+	 * 	2) BACKSPACE: when the user presses back space. deletes the previous word.
+	 * 	3) Any alphabetical key press: the ultimately put together to form the user's
+	 * 		guesses.
+	 * 	The tiles are also animated as they are typed in.
+	 * 
+	 * @param tiles
+	 * 		These are updated as the user enters letters in
+	 * @param stage
+	 * 		This is passed in so we can update the tiles on the screen
+	 * @param controller
+	 * 		This is passed in so we can tell if the user won or not and if the game is over.
+	 */
 	private void keyPress(Tile[][] tiles, Stage stage, WordleController controller) {
 		
 		EventHandler<KeyEvent> keyPressEvent = new EventHandler<KeyEvent>() {
@@ -148,7 +210,7 @@ public class WordleGUIView extends Application implements Observer{
         			Platform.runLater(() -> {
         				ButtonType button = ButtonType.FINISH;
         				if (controller.isWin()) {
-        					Alert dialog = new Alert(AlertType.INFORMATION, "Horay! The word was: " + controller.getAnswer(), button);
+        					Alert dialog = new Alert(AlertType.INFORMATION, "Hooray! The word was: " + controller.getAnswer(), button);
         					dialog.show();
         				}
         				else {
@@ -184,11 +246,13 @@ public class WordleGUIView extends Application implements Observer{
         			Platform.runLater(() -> {
         				ButtonType button = ButtonType.FINISH;
         				if (controller.isWin()) {
-        					Alert dialog = new Alert(AlertType.INFORMATION, "Horay! The word was: " + controller.getAnswer(), button);
+        					Alert dialog = new Alert(AlertType.INFORMATION, 
+        							"Horay! The word was: " + controller.getAnswer(), button);
         					dialog.show();
         				}
         				else {
-        					Alert dialog = new Alert(AlertType.INFORMATION, "Game Over! The word was: " + controller.getAnswer(), button);
+        					Alert dialog = new Alert(AlertType.INFORMATION, 
+        							"Game Over! The word was: " + controller.getAnswer(), button);
         					dialog.show();
         				}        		        
         		    });
@@ -201,14 +265,36 @@ public class WordleGUIView extends Application implements Observer{
 		stage.addEventHandler(KeyEvent.KEY_PRESSED, keyPressEvent);
 	}
 	
+	/**
+	 * This handles the animation and updates the letters being typed by the user.
+	 * As each key is pressed, the tile is wiggled and the tile is darkend.
+	 * 
+	 * @param letter
+	 * 		This is the letter being typed in which will be updated onto the tile.
+	 * @param currentTile
+	 * 		This is the current tile we are on that will be updated with a letter and
+	 * 		animated.
+	 */
 	private void letterPress(String letter, Tile currentTile) {
 		wiggleRow(currentTile);
 		currentTile.getText().setText(letter);
 		currentTile.getBorderRectangle().setStroke(Color.BLACK);
 	}
 	
+	/**
+	 * This handles when the ENTER key is pressed. It ultimately sends the 
+	 * guess to the controller to be evaluated.  An alert will pop up if the user
+	 * guesses:
+	 * 	1) a word that is not in the dictionary, and
+	 * 	2) a word that is too short (less than 4 letters)
+	 * 
+	 * @param tiles
+	 * 		The tiles are passed in so we know what the user's guess is.
+	 * @param controller
+	 * 		the controller is passed in so we can send the guess to be evaluated.
+	 */
 	private void enterPress (Tile[][] tiles, WordleController controller) {
-		 String guess = getWord(tiles, controller);
+		 String guess = getWord(tiles);
 		 try {
 			 controller.makeGuess(guess);
 		 }
@@ -220,7 +306,16 @@ public class WordleGUIView extends Application implements Observer{
 		 }
 	}
 	
-	private String getWord(Tile[][] tiles, WordleController controller) {
+	/**
+	 * The method retrieves the current guess and returns it so we can send it
+	 * to the controller to be evaluated.
+	 * 
+	 * @param tiles
+	 * 		These are the tiles we are currently dealing with.
+	 * @return
+	 * 		Returns the user's guess in a string format.
+	 */
+	private String getWord(Tile[][] tiles) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < NUM_LETTERS; i++) {
 			sb.append(tiles[CUR_GUESS][i].getText().getText());
@@ -228,12 +323,23 @@ public class WordleGUIView extends Application implements Observer{
 		return sb.toString();
 	}
 	
+	/**
+	 * This handles when a backspace is pressed. The previous tile gets blanked out
+	 * and formatting is wiped.
+	 * 
+	 * @param curTile
+	 * 		This is the tile to be wiped.
+	 */
 	private void backSpacePress(Tile curTile) {
 		curTile.getText().setText("");
 		curTile.getBorderRectangle().setStroke(Color.LIGHTGREY);
 	}
 	
 
+	/**
+	 * This updates the view. So the tiles animated, and the keyboard is 
+	 * updated to reflect the correctness of each letter guessed.
+	 */
 	@Override
 	public void update(Observable model, Object arg1) {
 		WordleModel game = (WordleModel) model;
@@ -244,25 +350,39 @@ public class WordleGUIView extends Application implements Observer{
 		CUR_COL = -1;
 	}
 	
+	/**
+	 * This updates the tiles after the letters in the guess has been
+	 * validated. The tiles are flipped to reveal the color that reflects
+	 * their correctness.
+	 * @param game
+	 * 		This is the WordleModel which is passed in to check the
+	 * 		correctness of the guess.
+	 */
 	private void updateTiles(WordleModel game) {
 		Guess guess = (Guess) game.getProgress()[CUR_GUESS];
 		for (int i = 0; i < NUM_LETTERS; i++) {
 			if (guess.getIndices()[i] == INDEX_RESULT.INCORRECT) {
+				// animation
 				flipTile(tilesArray[CUR_GUESS][i],i);
+				// update color
 				tilesArray[CUR_GUESS][i].borderRectangle.setFill(Color.rgb(119,136,153));
 				tilesArray[CUR_GUESS][i].borderRectangle.setStroke(Color.rgb(119,136,153));
 				tilesArray[CUR_GUESS][i].getText().setFill(Color.rgb(255, 255, 255));
 			}
 			
 			if (guess.getIndices()[i] == INDEX_RESULT.CORRECT) {
+				// animation
 				flipTile(tilesArray[CUR_GUESS][i], i);
+				// update color
 				tilesArray[CUR_GUESS][i].borderRectangle.setFill(Color.rgb(106,170,100));
 				tilesArray[CUR_GUESS][i].borderRectangle.setStroke(Color.rgb(106,170,100));
 				tilesArray[CUR_GUESS][i].getText().setFill(Color.rgb(255, 255, 255));
 			}
 			
 			if (guess.getIndices()[i] == INDEX_RESULT.CORRECT_WRONG_INDEX) {
+				// animation
 				flipTile(tilesArray[CUR_GUESS][i], i);
+				// update color
 				tilesArray[CUR_GUESS][i].borderRectangle.setFill(Color.rgb(189,183,107));
 				tilesArray[CUR_GUESS][i].borderRectangle.setStroke(Color.rgb(189,183,107));
 				tilesArray[CUR_GUESS][i].getText().setFill(Color.rgb(255, 255, 255));
@@ -270,6 +390,13 @@ public class WordleGUIView extends Application implements Observer{
 		}
 	}
 	
+	/**
+	 * Updates the keyboard under the tiles to reflect the correctness of what the player
+	 * has already guessed.
+	 * 
+	 * @param game
+	 * 		This is the WordleModel which is passed in to check the correctness of the guess.
+	 */
 	private void updateKeyboard(WordleModel game) {
 		for (int i = 0; i < 26; i ++) {
 			int letterIdx = (int) keyboardTiles[i].getText().getText().toUpperCase().charAt(0) - 'A';
@@ -291,6 +418,16 @@ public class WordleGUIView extends Application implements Observer{
 		}
 	}
 	
+	/**
+	 * Implements the animation to flip the tile over when the player has made
+	 * a guess.
+	 * 
+	 * @param tile
+	 * 		The tile to be animated.
+	 * @param col
+	 * 		This is used to calculate the delay of animation between each
+	 * 		tile.
+	 */
 	private void flipTile(Tile tile, int col) {
 		int delay = col * 200;
 		int speed = 700;
@@ -299,12 +436,17 @@ public class WordleGUIView extends Application implements Observer{
         rotator.setFromAngle(0);
         rotator.setToAngle(360);
         
-        
 		SequentialTransition animation = new SequentialTransition(
 				new PauseTransition(Duration.millis(delay)), rotator);
 		animation.play();
 	}
 	
+	/**
+	 * Implements the animation to wiggle the tile.
+	 * 
+	 * @param tile
+	 * 		The tile to be wiggled.
+	 */
 	private void wiggleRow(Tile tile) {
 		ScaleTransition scale = new ScaleTransition(Duration.millis(20), tile);
 		
@@ -317,7 +459,13 @@ public class WordleGUIView extends Application implements Observer{
 		animation.play();
 	}
 
-	
+	/**
+	 * This class implements each of the the tiles in the keyboard. This initializes
+	 * their color, size, and other overall appearances the player will see
+	 * when the game is started.
+	 * @author Leighanna Pipatanangkura
+	 *
+	 */
 	private class KeyBoardTile extends StackPane {
 		private Text text = new Text();
 		private Rectangle borderRectangle;
@@ -339,15 +487,33 @@ public class WordleGUIView extends Application implements Observer{
 			getChildren().addAll(borderRectangle, text);
 		}
 		
+		/**
+		 * Returns the Rectangle surrounding the letter
+		 * @return
+		 * 		The rectangle that borders the letter
+		 */
 		private Rectangle getBorderRectangle() {
 			return borderRectangle;
 		}
 		
+		/**
+		 * Returns the Text object that is placed in the middle
+		 * of the rectangle
+		 * @return
+		 * 		The text object that appears in the center of the
+		 * 		rectangle
+		 */
 		private Text getText() {
 			return text;
 		}
 	}
-	
+	/**
+	 * This class represents the Tiles that the user interacts with. This
+	 * initializes the tiles' color, size, and other overall appearances the player
+	 * will see when the game is started.
+	 * @author lee
+	 *
+	 */
 	private class Tile extends StackPane {
 		private Text text = new Text();
 		private Rectangle borderRectangle;
@@ -368,10 +534,22 @@ public class WordleGUIView extends Application implements Observer{
 			getChildren().addAll(borderRectangle, text);
 		}
 		
+		/**
+		 * Returns the Rectangle surrounding the letter
+		 * @return
+		 * 		The rectangle that borders the letter
+		 */
 		private Rectangle getBorderRectangle() {
 			return borderRectangle;
 		}
 		
+		/**
+		 * Returns the Text object that is placed in the middle
+		 * of the rectangle
+		 * @return
+		 * 		The text object that appears in the center of the
+		 * 		rectangle
+		 */
 		private Text getText() {
 			return text;
 		}
