@@ -7,13 +7,11 @@ import utilities.Guess;
 public class WordleController {
 	
 	private WordleModel model;
-	private Guess[] progress;
 	private static final int MAX_NUM_GUESSES = 6;
 	private int currGuess;
 	
 	public WordleController (WordleModel model) {
 		this.model = model;
-		this.progress = new Guess[MAX_NUM_GUESSES];
 		this.currGuess = 0;
 	} 
 	
@@ -30,8 +28,16 @@ public class WordleController {
 		return false;
 	}
 	
+	public boolean isWin() {
+		return model.getProgress()[currGuess-1].getIsCorrect();
+	}
+	
 	public String getAnswer() {
 		return this.model.getAnswer();
+	}
+	
+	public int getCurGuess() {
+		return currGuess;
 	}
 	
 	public void makeGuess(String guess) {
